@@ -1,0 +1,42 @@
+{
+  "header": {
+    "logo": "https://www.powerfrill.com/wp-content/uploads/2024/05/powerfrill-white-logo-final.png",
+    "title": "Powerfrill"
+  },
+  "productsSection": {
+    "title": "Welcome to Powerfrills",
+    "subtitle": "OUR PRODUCT",
+    "products": [
+      {
+        "image": "http://127.0.0.1:5500/images/aero.png",
+        "title": "Solar Powerfrill Solutions",
+        "description": "Advanced photovoltaic systems designed to maximize energy efficiency and provide sustainable power solutions for residential and commercial applications.",
+        "link": "product-detail.html?id=solar-power"
+      },
+      {
+        "image": "images/greenhydrogen.webp",
+        "title": "Green Hydrogen Systems",
+        "description": "Revolutionary hydrogen production technology using renewable energy sources to create clean, sustainable fuel for the future.",
+        "link": "product-detail.html?id=green-hydrogen"
+      },
+      {
+        "image": "images/battery.webp",
+        "title": "Batteries & Energy Storage",
+        "description": "High-capacity energy storage solutions that ensure reliable power supply and optimize energy management for modern applications.",
+        "link": "product-detail.html?id=energy-storage"
+      },
+      {
+        "image": "images/solarthermal.webp",
+        "title": "Solar Thermal Generator",
+        "description": "Cutting-edge thermal energy systems that convert solar radiation into usable heat and electricity with maximum efficiency.",
+        "link": "product-detail.html?id=thermal-generator"
+      },
+      {
+        "image": "images/automatic.webp",
+        "title": "Automatic Battery",
+        "description": "Precision solar tracking mirrors that concentrate sunlight for enhanced energy collection and improved solar system performance.",
+        "link": "product-detail.html?id=micro-heliostats"
+      }
+    ]
+  }
+}
