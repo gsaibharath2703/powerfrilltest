@@ -374,6 +374,14 @@ html,body{
   background: rgba(255,255,255,0.02);
 }
 
+/* drag-over state for images when dragging files */
+.editable-highlight.drag-over {
+  outline: 3px solid rgba(25,195,192,0.9);
+  background: rgba(25,195,192,0.15);
+  transform: scale(1.02);
+  transition: all 0.2s ease;
+}
+
 /* login modal */
 .admin-login {
   position: fixed;

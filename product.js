@@ -108,6 +108,8 @@
         if (el.tagName.toLowerCase() === "img") {
           el.style.cursor = "pointer";
           el.addEventListener("dblclick", imageDoubleClickHandler);
+          // Add drag and drop support
+          setupImageDragAndDrop(el);
         } else {
           el.addEventListener("blur", editableBlurHandler);
         }
@@ -117,6 +119,8 @@
         if (el.tagName.toLowerCase() === "img") {
           el.style.cursor = "";
           el.removeEventListener("dblclick", imageDoubleClickHandler);
+          // Remove drag and drop support
+          removeImageDragAndDrop(el);
         } else {
           el.removeEventListener("blur", editableBlurHandler);
         }
@@ -127,6 +131,66 @@
     isEditMode = editMode;
   }
 
+  function setupImageDragAndDrop(imgElement) {
+    // Prevent default drag behavior
+    imgElement.addEventListener("dragover", handleDragOver);
+    imgElement.addEventListener("dragenter", handleDragEnter);
+    imgElement.addEventListener("dragleave", handleDragLeave);
+    imgElement.addEventListener("drop", handleImageDrop);
+    
+    // Store handlers for cleanup
+    imgElement._dragHandlers = {
+      dragover: handleDragOver,
+      dragenter: handleDragEnter,
+      dragleave: handleDragLeave,
+      drop: handleImageDrop
+    };
+  }
+
+  function removeImageDragAndDrop(imgElement) {
+    if (imgElement._dragHandlers) {
+      imgElement.removeEventListener("dragover", imgElement._dragHandlers.dragover);
+      imgElement.removeEventListener("dragenter", imgElement._dragHandlers.dragenter);
+      imgElement.removeEventListener("dragleave", imgElement._dragHandlers.dragleave);
+      imgElement.removeEventListener("drop", imgElement._dragHandlers.drop);
+      delete imgElement._dragHandlers;
+      imgElement.classList.remove("drag-over");
+    }
+  }
+
+  function handleDragOver(e) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+
+  function handleDragEnter(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    e.currentTarget.classList.add("drag-over");
+  }
+
+  function handleDragLeave(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    e.currentTarget.classList.remove("drag-over");
+  }
+
+  function handleImageDrop(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    e.currentTarget.classList.remove("drag-over");
+
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+      const file = files[0];
+      if (file.type.startsWith("image/")) {
+        handleImageFile(file, e.currentTarget);
+      } else {
+        alert("Please drop an image file.");
+      }
+    }
+  }
+
   function editableBlurHandler(e) {
     const el = e.currentTarget;
     persistEditableChange(el);
@@ -134,11 +198,50 @@
 
   function imageDoubleClickHandler(e) {
     const el = e.currentTarget;
-    const newSrc = prompt("Enter new image URL:", el.src);
-    if (newSrc !== null) {
-      el.src = newSrc;
-      persistEditableChange(el);
+    openImageFileDialog(el);
+  }
+
+  function openImageFileDialog(imgElement) {
+    // Create a file input if it doesn't exist or reuse existing one
+    let fileInput = document.getElementById("imageUploadInput");
+    if (!fileInput) {
+      fileInput = document.createElement("input");
+      fileInput.type = "file";
+      fileInput.id = "imageUploadInput";
+      fileInput.accept = "image/*";
+      fileInput.style.display = "none";
+      document.body.appendChild(fileInput);
     }
+
+    // Store reference to the image element being edited
+    fileInput.dataset.targetImage = "true";
+    fileInput.currentImageElement = imgElement;
+
+    // Clear previous selection
+    fileInput.value = "";
+
+    // Open file dialog
+    fileInput.click();
+
+    // Handle file selection
+    fileInput.onchange = function(event) {
+      const file = event.target.files[0];
+      if (file && file.type.startsWith("image/")) {
+        handleImageFile(file, imgElement);
+      }
+    };
+  }
+
+  function handleImageFile(file, imgElement) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      imgElement.src = e.target.result;
+      persistEditableChange(imgElement);
+    };
+    reader.onerror = function() {
+      alert("Error reading file. Please try again.");
+    };
+    reader.readAsDataURL(file);
   }
 
   function persistEditableChange(el) {
